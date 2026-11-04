@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feliz cumpleaños 💖</title>
+
+<style>
+/* ===== BASE ===== */
+:root{--a:#ff9ec4;--b:#ff4d8d;--g1:#3a0d2a;--g2:#8a1d4d;--f:Georgia,serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--f);color:#fff;min-height:100vh;background:linear-gradient(160deg,var(--g1),var(--g2)) fixed;overflow-x:hidden}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+ background:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(2px 2px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 50% 70%,#fff,transparent),radial-gradient(2px 2px at 85% 80%,#fff,transparent),radial-gradient(1.5px 1.5px at 10% 85%,#fff,transparent);animation:tw 3s infinite alternate}
+.fl{position:absolute;bottom:-70px;font-size:38px;font-style:normal;opacity:.85;animation:rise linear infinite}
+canvas{position:fixed;inset:0;z-index:50;pointer-events:none}
+main{position:relative;z-index:1}
+.screen{display:none;min-height:100vh;padding:28px 20px 60px;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px}
+.screen.active{display:flex;animation:in .6s}
+h1{font-size:clamp(2rem,7vw,3.8rem);line-height:1.1;color:var(--a);text-shadow:0 4px 24px #0006}
+h1 span{display:inline-block;animation:pop .6s both}
+h2{font-size:clamp(1.3rem,4vw,1.8rem);color:var(--a)}
+p{max-width:520px;line-height:1.6;font-size:1.08rem}
+.btn{background:linear-gradient(135deg,var(--a),var(--b));color:#1b1030;font:inherit;font-weight:700;border:0;border-radius:99px;padding:14px 28px;font-size:1.05rem;cursor:pointer;box-shadow:0 8px 24px #0005;transition:.2s}
+.btn:hover{transform:translateY(-3px) scale(1.04)}
+.btn:focus-visible,input:focus-visible,.candle:focus-visible{outline:3px solid var(--a);outline-offset:3px}
+input{width:100%;max-width:380px;padding:12px 14px;border-radius:14px;border:2px solid #fff4;background:#0004;color:#fff;font:inherit;text-align:center}
+.shake{animation:shake .4s}
+
+/* ===== REGALO DE INICIO ===== */
+.gift{position:relative;width:140px;height:140px;animation:bob 2.5s ease-in-out infinite}
+.gift .box{position:absolute;bottom:0;width:100%;height:95px;background:linear-gradient(var(--b),var(--a));border-radius:8px;box-shadow:0 12px 30px #0006}
+.gift .box:before,.lid:before{content:"";position:absolute;left:50%;width:22px;margin-left:-11px;top:0;bottom:0;background:#fff9}
+.lid{position:absolute;top:10px;left:-8px;right:-8px;height:42px;background:var(--a);border-radius:8px;z-index:2;transition:transform .9s cubic-bezier(.3,1.6,.5,1),opacity .9s;transform-origin:left bottom}
+.gift.open{animation:none}.gift.open .lid{transform:translate(-40px,-110px) rotate(-35deg);opacity:.2}
+
+/* ===== TORTA ===== */
+.cake{position:relative;width:220px;height:180px;margin:34px auto 6px;cursor:pointer}
+.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:14px;box-shadow:0 8px 20px #0005}
+.t1{bottom:0;width:220px;height:75px;background:linear-gradient(#fff,var(--a) 40%,var(--b))}
+.t2{bottom:75px;width:150px;height:58px;background:linear-gradient(#fff,var(--b))}
+.candles{position:absolute;bottom:131px;left:50%;transform:translateX(-50%);display:flex;gap:13px;z-index:2}
+.candle{width:14px;height:38px;border:0;padding:0;border-radius:3px;position:relative;cursor:pointer;background:repeating-linear-gradient(#fff 0 6px,#ff5c8a 6px 12px)}
+.candle:after{content:"";position:absolute;left:50%;top:-21px;margin-left:-7px;width:14px;height:20px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(#fff,#ffd166 50%,#ff7b00);box-shadow:0 0 16px #ffb703;animation:fk .4s infinite alternate;transition:.3s;transform-origin:bottom}
+.candle.off:after{transform:scale(0);opacity:0;animation:none}
+
+/* ===== DESEOS ===== */
+.wishes{background:#ffffff14;border:1px solid #fff3;border-radius:22px;padding:22px;width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;gap:12px;backdrop-filter:blur(6px)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.chip{background:#ffffff22;color:#fff;border:1px solid #fff4;border-radius:99px;padding:6px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+.chip:hover{background:#ffffff40}
+#wishList{list-style:none;display:flex;flex-direction:column;gap:6px}
+#wishList li{animation:pop .5s both}
+.sig{font-style:italic;font-size:1.3rem;color:var(--a);margin-top:6px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#000b;padding:10px 18px;border-radius:99px;z-index:70;opacity:0;pointer-events:none;transition:.3s}
+#toast.on{opacity:1}
+
+/* ===== MÚSICA, PROGRESO, CARTA, TARJETAS Y CAJAS ===== */
+#snd{display:none;position:fixed;top:12px;right:12px;z-index:60;background:#ffffff22;color:#fff;border:1px solid #fff4;border-radius:99px;padding:8px 14px;font:inherit;cursor:pointer}
+#snd:hover{background:#ffffff40}
+.bar{width:100%;max-width:420px}.prog{height:10px;background:#fff3;border-radius:9px;margin-top:6px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--a),var(--b));transition:width .6s}
+.sec{width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.env{position:relative;width:200px;height:130px;border:0;padding:0;background:none;cursor:pointer;transition:.3s}
+.env:hover{transform:translateY(-4px) rotate(-2deg)}
+.env .bd{position:absolute;inset:0;background:linear-gradient(var(--a),var(--b));border-radius:8px;box-shadow:0 10px 26px #0006;display:grid;place-items:center;font-size:3rem}
+.letter{max-height:0;overflow:hidden;opacity:0;transition:max-height 1.4s ease,opacity .8s,padding .6s;background:#fff8f0;color:#4a1a2e;border-radius:6px;width:100%;max-width:460px;text-align:left;box-shadow:0 14px 36px #0006;padding:0 24px}
+.letter.on{max-height:1400px;opacity:1;padding:26px 24px}
+.letter p{max-width:none;color:#4a1a2e;margin-bottom:10px;animation:pop .8s both;animation-delay:var(--d)}
+.letter .sg{text-align:right;font-style:italic;color:#b3365f;font-size:1.2rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;width:100%;max-width:640px}
+.fc{perspective:900px;cursor:pointer;display:grid;min-height:180px}
+.fc>div{grid-area:1/1;border-radius:18px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;backface-visibility:hidden;transition:transform .7s;background:#ffffff1f;border:2px solid var(--a);backdrop-filter:blur(8px);box-shadow:0 12px 30px #0004}
+.fc .bk{transform:rotateY(180deg);cursor:default}.fc.on .ft{transform:rotateY(-180deg)}.fc.on .bk{transform:none}
+.fc .ft b{font-size:2.4rem}.fc p{font-size:.98rem}
+.bx{font-size:3.2rem;background:none;border:0;cursor:pointer;transition:.3s}.bx:hover{transform:rotate(-8deg) scale(1.15)}.bx.open{transform:scale(.9)}
+
+/* ===== ANIMACIONES ===== */
+@keyframes in{from{opacity:0;transform:translateY(20px)}}
+@keyframes bob{50%{transform:translateY(-12px)}}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.6)}}
+@keyframes rise{to{transform:translateY(-125vh) rotate(15deg)}}
+@keyframes fk{to{transform:scale(1.15) rotate(4deg)}}
+@keyframes tw{to{opacity:.55}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}.fl{display:none}}
+</style>
+</head>
+
+<body>
+<div id="bg"></div>
+<canvas id="fx"></canvas>
+<button id="snd" aria-pressed="false">🎵 Música</button>
+
+<main>
+  <!-- PANTALLA 1: INICIO -->
+  <section id="s-intro" class="screen active">
+    <div class="gift" id="gift"><div class="lid"></div><div class="box"></div></div>
+    <h1>¡Hoy es un día muy especial!</h1>
+    <p>Alguien preparó algo bonito para ti. ¿Quieres descubrirlo?</p>
+    <button class="btn" id="open">Abrir mi sorpresa</button>
+  </section>
+
+  <!-- PANTALLA 2: FELICITACIÓN -->
+  <section id="s-party" class="screen">
+    <h1 id="title"></h1>
+    <p id="msg"></p>
+
+    <!-- Torta con velas -->
+    <div class="cake" id="cake">
+      <div class="candles" id="candles"></div>
+      <div class="tier t2"></div><div class="tier t1"></div>
+    </div>
+    <p id="candleNote"></p>
+    <button class="btn" id="party">🎉 ¡Celebrar!</button>
+
+    <!-- Progreso -->
+    <div class="bar"><span id="count"></span><div class="prog"><i id="prog"></i></div></div>
+
+    <!-- Carta -->
+    <h2>Una carta para ti</h2>
+    <div class="sec">
+      <button class="env" id="env" aria-label="Abrir la carta"><div class="bd">💌</div></button>
+      <small id="envNote">Toca el sobre para abrirlo</small>
+      <div class="letter" id="letter"></div>
+    </div>
+
+    <!-- Tarjetas -->
+    <h2>Sorpresas para descubrir</h2>
+    <div class="cards" id="cards"></div>
+
+    <!-- Cajas de regalo -->
+    <h2>Elige una caja de regalo</h2>
+    <div id="boxes"></div>
+    <p id="boxOut"></p>
+
+    <!-- Deseos -->
+    <h2>Pide un deseo para tu nuevo año</h2>
+    <div class="wishes">
+      <input id="wishIn" maxlength="60" placeholder="Escribe tu deseo...">
+      <div class="chips" id="chips"></div>
+      <button class="btn" id="wishBtn">Pedir deseo 🕯️</button>
+      <ul id="wishList"></ul>
+    </div>
+
+    <p class="sig" id="sig"></p>
+    <button class="btn" id="close">Cerrar sorpresa 🎁</button>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   ZONA EDITABLE: cambia aquí el nombre, el mensaje y la firma
+   ===================================================== */
+const CONFIG = {
+  name: "Mi amor",  // ✏️ Escribe aquí el nombre de tu pareja. Ej: "Ana"
+  message: "Hoy celebramos que existes. Te deseo un año lleno de amor, calma y momentos que te hagan sonreír. Gracias por ser parte de mi vida.",
+  signature: "Con todo mi amor 💖",
+  // ✏️ CARTA: cada texto es un párrafo. {n} se reemplaza por el nombre. La firma se agrega al final.
+  letter: [
+    "{n},",
+    "Hoy quiero dedicarte unas palabras para decirte que me alegra mucho que existas y que seas parte de mi vida.",
+    "Deseo que este nuevo año te traiga salud, tranquilidad y muchos momentos bonitos.",
+    "Feliz cumpleaños. Te quiero mucho. 💖"
+  ],
+  // ✏️ TARJETAS (emoji, título, texto al girarla)
+  cards: [
+    ["📸", "Un recuerdo bonito", "✏️ Escribe aquí un recuerdo especial de ustedes."],
+    ["😊", "Una razón para sonreír", "Hoy alguien pensó en ti con mucho cariño. 💖"],
+    ["🎟️", "Un cupón para ti", "Válido por una cita a tu elección. 🍽️"]
+  ],
+  // ✏️ CAJAS DE REGALO (se revuelven cada vez)
+  boxes: [
+    "🎉 Felicitación: ¡hoy el mundo brilla un poco más porque cumples años!",
+    "💌 Mensaje: mereces un año lleno de cosas buenas.",
+    "🎯 Mini reto: baila tu canción favorita durante 30 segundos."
+  ],
+  // ✏️ MÚSICA: vacío = melodía de "Cumpleaños feliz" generada por el navegador.
+  // O pon tu archivo, ej: "musica.mp3" (en la misma carpeta que este HTML).
+  music: "",
+  wishes: ["Salud 💪", "Amor 💞", "Viajes ✈️", "Paz 🕊️"]  // deseos rápidos
+};
+/* ================= FIN DE LA ZONA EDITABLE ================= */
+
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const name = CONFIG.name; let wishes = [];
+
+/* confeti */
+const cv = $("#fx"), cx = cv.getContext("2d"); let P = [], raf = 0;
+const fit = () => { cv.width = innerWidth; cv.height = innerHeight }; addEventListener("resize", fit); fit();
+function confetti(n = 120, x = .5, y = .4){
+  if(RM) n = Math.min(n, 12);
+  const col = ["#ff6b9d","#ffd166","#ff4d8d","#ffc2d9","#b388ff"];
+  for(let i = 0; i < n; i++) P.push({x:x*cv.width, y:y*cv.height, vx:(Math.random()-.5)*14, vy:Math.random()*-12-2, s:4+Math.random()*6, c:col[i%5], r:Math.random()*6, l:100+Math.random()*60});
+  if(!raf) raf = requestAnimationFrame(loop);
+}
+function loop(){
+  cx.clearRect(0, 0, cv.width, cv.height); P = P.filter(p => p.l-- > 0);
+  P.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.vy+=.3; p.vx*=.99; p.r+=.2; cx.globalAlpha=Math.min(1,p.l/40); cx.fillStyle=p.c;
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); cx.restore(); });
+  raf = P.length ? requestAnimationFrame(loop) : 0; if(!raf) cx.clearRect(0, 0, cv.width, cv.height);
+}
+function toast(t){ const e = $("#toast"); e.textContent = t; e.classList.add("on"); setTimeout(() => e.classList.remove("on"), 2200); }
+function show(id){ $$(".screen").forEach(s => s.classList.toggle("active", s.id === id)); scrollTo(0, 0); }
+
+/* globos que suben lentamente */
+(function(){
+  const em = ["🎈","💖","🎈","💕","🎈","🌹"];
+  $("#bg").innerHTML = Array.from({length:14}, (_, i) =>
+    `<i class="fl" style="left:${i*7.2}%;animation-duration:${10+i%5*3}s;animation-delay:${-i*1.9}s">${em[i%em.length]}</i>`).join("");
+})();
+
+/* inicio: abrir la sorpresa */
+$("#open").onclick = () => {
+  $("#gift").classList.add("open"); $("#open").disabled = true; confetti(140, .5, .45); playMusic();
+  setTimeout(() => { build(); show("s-party"); }, 1100);
+};
+
+/* felicitación */
+function build(){
+  $("#title").innerHTML = [..."¡Feliz cumpleaños, " + name + "!"].map((c, i) =>
+    `<span style="animation-delay:${i*.04}s">${c === " " ? "&nbsp;" : esc(c)}</span>`).join("");
+  $("#msg").textContent = CONFIG.message;
+  $("#sig").textContent = CONFIG.signature;
+  $("#chips").innerHTML = CONFIG.wishes.map(w => `<button class="chip" data-w="${esc(w)}">${esc(w)}</button>`).join("");
+  candles(); extras(); confetti(170);
+}
+
+/* velas */
+function candles(){
+  $("#candles").innerHTML = '<button class="candle" aria-label="Vela"></button>'.repeat(5);
+  $("#candleNote").textContent = "Toca las velas para apagarlas 🕯️";
+}
+$("#candles").onclick = e => {
+  const c = e.target.closest(".candle"); if(!c || c.classList.contains("off")) return;
+  c.classList.add("off");
+  if(!$$("#candles .candle:not(.off)").length){ confetti(90, .5, .5); $("#candleNote").textContent = "¡Deseo pedido! Toca la torta para encender las velas otra vez 🎂"; }
+};
+$("#cake").onclick = e => { if(!e.target.closest(".candle") && !$$("#candles .candle:not(.off)").length) candles(); };
+$("#party").onclick = () => { confetti(200, .5, .3); confetti(100, .1, .5); confetti(100, .9, .5); };
+
+/* deseos */
+$("#chips").onclick = e => { const b = e.target.closest("[data-w]"); if(b){ $("#wishIn").value = b.dataset.w; $("#wishIn").focus(); } };
+$("#wishBtn").onclick = e => {
+  const v = $("#wishIn").value.trim();
+  if(!v){ $("#wishIn").classList.add("shake"); setTimeout(() => $("#wishIn").classList.remove("shake"), 400); $("#wishIn").focus(); return; }
+  wishes.push(v); found("wish"); $("#wishList").innerHTML = wishes.map(w => `<li>✨ ${esc(w)}</li>`).join("");
+  $("#wishIn").value = ""; $$("#candles .candle:not(.off)").forEach(c => c.classList.add("off"));
+  confetti(60, e.clientX/innerWidth, e.clientY/innerHeight);
+  $("#candleNote").textContent = "¡Deseo pedido! Toca la torta para encender las velas otra vez 🎂";
+};
+$("#wishIn").onkeydown = e => { if(e.key === "Enter") $("#wishBtn").click(); };
+
+/* progreso de sorpresas */
+const TOTAL = 6, F = new Set();
+function progress(){ $("#count").textContent = `Sorpresas descubiertas: ${F.size}/${TOTAL}`; $("#prog").style.width = (F.size/TOTAL*100) + "%"; }
+function found(id){ F.add(id); progress(); if(F.size === TOTAL){ confetti(220, .5, .4); toast("¡Descubriste todas las sorpresas! 💖"); } }
+const at = e => [e.clientX/innerWidth, e.clientY/innerHeight];
+
+/* carta, tarjetas y cajas */
+function extras(){
+  F.clear(); progress(); $("#snd").style.display = "block";
+  $("#letter").className = "letter"; $("#letter").innerHTML = ""; $("#env .bd").textContent = "💌"; $("#envNote").textContent = "Toca el sobre para abrirlo";
+  $("#cards").innerHTML = CONFIG.cards.map((c, i) => `<div class="fc" data-i="${i}"><div class="ft"><b>${c[0]}</b><h3>${esc(c[1])}</h3><small>Toca para descubrir</small></div><div class="bk"><p>${esc(c[2])}</p></div></div>`).join("");
+  $("#boxes").innerHTML = [...CONFIG.boxes].sort(() => Math.random() - .5).map((p, i) => `<button class="bx" data-p="${esc(p)}" aria-label="Caja ${i+1}">🎁</button>`).join("");
+  $("#boxOut").textContent = "Elige una caja...";
+}
+$("#env").onclick = () => {
+  const L = $("#letter"); if(L.classList.contains("on")) return;
+  L.innerHTML = CONFIG.letter.map((t, i) => `<p style="--d:${i*.7+.4}s">${esc(t.replace("{n}", name))}</p>`).join("")
+    + `<p class="sg" style="--d:${CONFIG.letter.length*.7+.4}s">${esc(CONFIG.signature)}</p>`;
+  L.classList.add("on"); $("#envNote").textContent = ""; $("#env .bd").textContent = "💖"; found("letter"); confetti(50, .5, .5);
+};
+$("#cards").onclick = e => { const fc = e.target.closest(".fc"); if(!fc || fc.classList.contains("on")) return; fc.classList.add("on"); found("c" + fc.dataset.i); confetti(40, ...at(e)); };
+$("#boxes").onclick = e => { const b = e.target.closest(".bx"); if(!b || b.classList.contains("open")) return;
+  b.classList.add("open"); b.textContent = "✨"; $("#boxOut").textContent = b.dataset.p; found("box"); confetti(50, ...at(e)); };
+
+/* música: "Cumpleaños feliz" generada con Web Audio (no necesita internet ni archivos) */
+const MEL = [[0,.75],[0,.25],[2,1],[0,1],[5,1],[4,2],[0,.75],[0,.25],[2,1],[0,1],[7,1],[5,2],
+             [0,.75],[0,.25],[12,1],[9,1],[5,1],[4,1],[2,1],[10,.75],[10,.25],[9,1],[5,1],[7,1],[5,2]];
+let ac, mg, mt, playing = false, audioEl;
+function setMusic(on){ playing = on; $("#snd").textContent = on ? "🎵 Música: sí" : "🔇 Música: no"; $("#snd").setAttribute("aria-pressed", on); }
+function melody(){
+  if(!playing) return;
+  mg = ac.createGain(); mg.gain.value = .12; mg.connect(ac.destination);
+  let t = ac.currentTime + .1; const bt = .5;
+  MEL.forEach(([s, b]) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = "triangle"; o.frequency.value = 261.63 * Math.pow(2, s/12);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1, t + .03); g.gain.exponentialRampToValueAtTime(.001, t + b*bt*.95);
+    o.connect(g).connect(mg); o.start(t); o.stop(t + b*bt); t += b*bt; });
+  mt = setTimeout(melody, (t - ac.currentTime + 1.5) * 1000);
+}
+function playMusic(){
+  if(CONFIG.music){ audioEl = audioEl || new Audio(CONFIG.music); audioEl.loop = true; audioEl.play().then(() => setMusic(true)).catch(() => toast("No se pudo reproducir la música")); return; }
+  try{ ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); }catch(e){ toast("Tu navegador no permite sonido"); return; }
+  setMusic(true); melody();
+}
+function stopMusic(){ setMusic(false); clearTimeout(mt); if(audioEl) audioEl.pause(); if(mg){ mg.gain.value = 0; mg.disconnect(); } }
+$("#snd").onclick = () => playing ? stopMusic() : playMusic();
+
+/* cerrar sorpresa: detiene la música y vuelve a la caja cerrada (se puede abrir otra vez) */
+$("#close").onclick = () => {
+  stopMusic(); $("#snd").style.display = "none";
+  wishes = []; $("#wishList").innerHTML = ""; $("#wishIn").value = "";
+  $("#gift").classList.remove("open"); $("#open").disabled = false;
+  show("s-intro");
+};
+</script>
+</body>
+</html>
+ to join this conversation on GitHub. Already have an account? Sign in to comment
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
